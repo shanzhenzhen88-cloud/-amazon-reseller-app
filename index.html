@@ -4,41 +4,91 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#111827" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Amazon Reseller App</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header>
+    <div class="eyebrow">SELLING TOOL</div>
     <h1>Amazon Reseller App</h1>
-    <p>Turn an Amazon purchase into a ready-to-post Facebook / Mercari listing.</p>
+    <p>Turn one Amazon item into Facebook Marketplace and Mercari listing drafts in seconds.</p>
   </header>
 
   <main>
+    <section class="card hero-card">
+      <label>Amazon product link
+        <div class="inline-field">
+          <input id="amazonUrl" type="url" inputmode="url" placeholder="Paste Amazon link here" autocapitalize="off" autocomplete="off" />
+          <button class="secondary compact" id="openAmazon" type="button">Open</button>
+        </div>
+      </label>
+      <div class="helper" id="asinHint">Paste a link and the app will detect the ASIN when possible.</div>
+    </section>
+
     <section class="card">
+      <h2>Product details</h2>
       <label>Product title<input id="title" placeholder="e.g. Ninja Air Fryer 5 QT" /></label>
+      <div class="grid">
+        <label>Brand<input id="brand" placeholder="e.g. Ninja" /></label>
+        <label>Category<input id="category" placeholder="e.g. Kitchen" /></label>
+      </div>
       <div class="grid">
         <label>Your cost ($)<input id="cost" type="number" step="0.01" inputmode="decimal" placeholder="39.99" /></label>
         <label>Target price ($)<input id="price" type="number" step="0.01" inputmode="decimal" placeholder="65" /></label>
       </div>
-      <label>Condition<select id="condition"><option>New</option><option>Like New</option><option>Good</option><option>Used</option></select></label>
-      <label>Notes<textarea id="notes" rows="4" placeholder="Sealed box, pickup location, color, size, etc."></textarea></label>
-      <button id="generate">Generate listing</button>
+      <label>Condition
+        <select id="condition"><option>New</option><option>New - Open Box</option><option>Like New</option><option>Good</option><option>Used</option></select>
+      </label>
+      <label>Pickup / shipping note<input id="fulfillment" placeholder="e.g. Pickup in Nassau County or shipping available" /></label>
+      <label>Extra notes<textarea id="notes" rows="4" placeholder="Color, size, sealed box, quantity, included accessories, etc."></textarea></label>
+      <button id="generate" type="button">Generate both listings</button>
+    </section>
+
+    <section class="card" id="profitCard" hidden>
+      <div class="metric-grid">
+        <div><span>Cost</span><strong id="mCost">—</strong></div>
+        <div><span>Sale price</span><strong id="mPrice">—</strong></div>
+        <div><span>Gross profit</span><strong id="mProfit">—</strong></div>
+        <div><span>Margin</span><strong id="mMargin">—</strong></div>
+      </div>
     </section>
 
     <section class="card" id="resultCard" hidden>
-      <div class="result-head"><h2>Listing draft</h2><button class="secondary" id="copy">Copy</button></div>
-      <textarea id="result" rows="12"></textarea>
-      <div class="stats" id="stats"></div>
+      <div class="tabs">
+        <button class="tab active" id="tabFacebook" type="button">Facebook</button>
+        <button class="tab" id="tabMercari" type="button">Mercari</button>
+      </div>
+
+      <div id="facebookPanel" class="panel">
+        <div class="result-head"><h2>Facebook Marketplace</h2><button class="secondary" id="copyFacebook" type="button">Copy</button></div>
+        <label>Title<input id="facebookTitle" /></label>
+        <label>Description<textarea id="facebookText" rows="11"></textarea></label>
+      </div>
+
+      <div id="mercariPanel" class="panel" hidden>
+        <div class="result-head"><h2>Mercari</h2><button class="secondary" id="copyMercari" type="button">Copy</button></div>
+        <label>Title<input id="mercariTitle" maxlength="80" /></label>
+        <div class="counter"><span id="mercariTitleCount">0</span>/80</div>
+        <label>Description<textarea id="mercariText" rows="11"></textarea></label>
+      </div>
+
       <div class="actions">
-        <button class="secondary" id="share">Share</button>
-        <button class="secondary" id="save">Save draft</button>
+        <button class="secondary" id="shareCurrent" type="button">Share</button>
+        <button class="secondary" id="save" type="button">Save item</button>
       </div>
     </section>
 
     <section class="card">
-      <div class="result-head"><h2>Saved drafts</h2><button class="secondary" id="clear">Clear</button></div>
-      <div id="drafts" class="drafts"><p class="muted">No saved drafts yet.</p></div>
+      <div class="result-head"><h2>Saved items</h2><button class="secondary" id="clear" type="button">Clear</button></div>
+      <div id="drafts" class="drafts"><p class="muted">No saved items yet.</p></div>
+    </section>
+
+    <section class="card note-card">
+      <strong>About Amazon links</strong>
+      <p>This version stores the link and can detect an ASIN, but it does not automatically pull Amazon title, price or photos yet. That requires a product-data API/backend, which can be added next.</p>
     </section>
   </main>
 
